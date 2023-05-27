@@ -298,9 +298,7 @@ def keydown(event):
     global start_pressed, bt_pressed, fx_pressed, bt_counts, fx_counts
     if event.button == start_key_code:
         start_pressed = True
-        if RESET_COUNTS_ON_START:
-            bt_counts = [0, 0, 0, 0]
-            fx_counts = [0, 0]
+
     for i in range(4):
         if event.button == bt_key_codes[i]:
             bt_pressed[i] = True
@@ -312,9 +310,12 @@ def keydown(event):
 
 
 def keyup(event):
-    global start_pressed, bt_pressed, fx_pressed
+    global start_pressed, bt_pressed, fx_pressed, bt_counts, fx_counts
     if event.button == start_key_code:
         start_pressed = False
+        if RESET_COUNTS_ON_START:
+            bt_counts = [0, 0, 0, 0]
+            fx_counts = [0, 0]
     for i in range(4):
         if event.button == bt_key_codes[i]:
             bt_pressed[i] = False
