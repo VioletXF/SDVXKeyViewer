@@ -1,7 +1,7 @@
 # SDVXKeyViewer
 A simple key viewer for Sound Voltex KONASUTE
 
-[Download from Releases](https://github.com/VioletXF/SDVXKeyViewer/releases)
+[Download from Releases](https://github.com/VioletXF/SDVXKeyViewer/releases/latest)
 
 
 ![image](https://github.com/VioletXF/SDVXKeyViewer/assets/27609690/925e53b0-f5bb-4e17-833b-4ed886854f08)
