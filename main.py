@@ -88,6 +88,7 @@ class MainWindow(QtWidgets.QWidget):
             self.draw_fx(qp, i)
         self.draw_tsumami(qp, False)
         self.draw_tsumami(qp, True)
+        self.draw_no_controller_alert(qp)
         qp.end()
 
     def draw_background(self, qp: QtGui.QPainter):
@@ -216,6 +217,19 @@ class MainWindow(QtWidgets.QWidget):
                     QtCore.QPoint(arrow_pos[0] + arrow_size, arrow_pos[1] + arrow_size),
                 
             )
+    
+    def draw_no_controller_alert(self, qp: QtGui.QPainter):
+        if len(joysticks) == 0:
+            qp.setPen(QtGui.QColor(255, 255, 255, 127))
+            qp.setBrush(QtGui.QColor(255, 255, 255, 127))
+            qp.drawRect(0, 0, self.width(), self.height())
+            qp.setPen(QtGui.QColor(255, 0, 0, 255))
+            qp.setBrush(QtGui.QColor(255, 0, 0, 255))
+            qp.drawText(
+                QtCore.QRect(0, 0, self.width(), self.height()),
+                QtCore.Qt.AlignmentFlag.AlignCenter,
+                "No controller detected!",
+            )
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         global UNIT_SIZE
@@ -286,8 +300,8 @@ start_pressed = False
 bt_pressed = [False for _ in range(4)]
 fx_pressed = [False for _ in range(2)]
 
-tsumami_l_angle = float(-90)
-tsumami_r_angle = float(-90)
+tsumami_l_angle = joysticks[0].get_axis(0) * 180 + 180 if len(joysticks) > 0 else -90
+tsumami_r_angle = joysticks[0].get_axis(1) * 180 + 180 if len(joysticks) > 0 else -90
 tsumami_l_clockwise = True
 tsumami_r_clockwise = True
 tsumami_l_turning = False
@@ -353,6 +367,8 @@ def tsumami(event):
 while running:
     if pg.joystick.get_count() != len(joysticks):
         joysticks = [pg.joystick.Joystick(x) for x in range(pg.joystick.get_count())]
+        tsumami_l_angle = joysticks[0].get_axis(0) * 180 + 180 if len(joysticks) > 0 else -90
+        tsumami_r_angle = joysticks[0].get_axis(1) * 180 + 180 if len(joysticks) > 0 else -90   
     tsumami_l_turning = False
     tsumami_r_turning = False
     for event in pg.event.get():
