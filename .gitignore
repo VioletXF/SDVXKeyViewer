@@ -1,0 +1,6 @@
+# gitignore for python
+#
+__pycache__/
+*.py[cod]
+build/
+dist/
