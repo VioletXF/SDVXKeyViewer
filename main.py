@@ -14,10 +14,10 @@ ALWAYS_ON_TOP = config.getboolean("Other", "always_on_top", fallback=False)
 RESET_COUNTS_ON_START = config.getboolean("Other", "reset_counts_on_start", fallback=False)
 FPS = config.getint("Other", "polling_rate", fallback=240)
 
-BUTTON_BG_OPACITY = int(config.getfloat("Colors", "button_bg_opacity", fallback=1) * 255)
+BG_OPACITY = int(config.getfloat("Colors", "bg_opacity", fallback=1) * 255)
 BUTTON_LED_OPACITY = int(config.getfloat("Colors", "button_led_opacity", fallback=1) * 255)
 TEXT_OPACITY = int(config.getfloat("Colors", "text_opacity", fallback=1) * 255)
-TSUMAMI_INDICATOR_OFF_OPACITY = int(config.getfloat("Colors", "tsumami_indicator_off_opacity", fallback=0.5) * 255)
+TSUMAMI_INDICATOR_OFF_OPACITY = int(config.getfloat("Colors", "tsumami_indicator_off_opacity", fallback=0.2) * 255)
 TSUMAMI_INDICATOR_ON_OPACITY = int(config.getfloat("Colors", "tsumami_indicator_on_opacity", fallback=1) * 255)
 TSUMAMI_LED_OPACITY = int(config.getfloat("Colors", "tsumami_led_opacity", fallback=0.2) * 255)
 
@@ -26,13 +26,13 @@ WINDOW_HEIGHT = int(math.ceil(UNIT_SIZE * 4))
 WINDOW_RATIO = WINDOW_WIDTH / WINDOW_HEIGHT
 font = QtGui.QFont()
 
-START_BG_COLOR = QtGui.QColor(255, 255, 255, BUTTON_BG_OPACITY)
+START_BG_COLOR = QtGui.QColor(255, 255, 255, BG_OPACITY)
 START_LED_COLOR = QtGui.QColor(0, 115, 229, BUTTON_LED_OPACITY)
 
-BT_BG_COLOR = QtGui.QColor(255, 255, 255, BUTTON_BG_OPACITY)
+BT_BG_COLOR = QtGui.QColor(255, 255, 255, BG_OPACITY)
 BT_LED_COLOR = QtGui.QColor(0, 115, 229, BUTTON_LED_OPACITY)
 
-FX_BG_COLOR = QtGui.QColor(255, 255, 255, BUTTON_BG_OPACITY)
+FX_BG_COLOR = QtGui.QColor(255, 255, 255, BG_OPACITY)
 FX_LED_COLOR = QtGui.QColor(255, 33, 12, BUTTON_LED_OPACITY)
 
 TEXT_COLOR = QtGui.QColor(0, 0, 0, TEXT_OPACITY)
@@ -158,8 +158,8 @@ class MainWindow(QtWidgets.QWidget):
 
         pos = [UNIT_SIZE * 6 + UNIT_SIZE // 2 + UNIT_SIZE // 4, 0] if right else [0, 0]
         # draw white at center
-        qp.setPen(QtGui.QColor(255, 255, 255, BUTTON_BG_OPACITY))
-        qp.setBrush(QtGui.QColor(255, 255, 255, BUTTON_BG_OPACITY))
+        qp.setPen(QtGui.QColor(255, 255, 255, BG_OPACITY))
+        qp.setBrush(QtGui.QColor(255, 255, 255, BG_OPACITY))
         qp.drawEllipse(pos[0], pos[1], tsumami_size, tsumami_size)
 
         bg_color = QtGui.QColor(255, 0, 0) if right else QtGui.QColor(0, 0, 255)
