@@ -6,6 +6,10 @@ A simple key viewer for Sound Voltex KONASUTE
 
 ![image](https://github.com/VioletXF/SDVXKeyViewer/assets/27609690/925e53b0-f5bb-4e17-833b-4ed886854f08)
 
+# Shortcuts
+- `Delete` - reset key counts
+- `ESC` - exit
+
 # Configuration
 You can customize the viewer by editing `settings.ini`
 ```ini
