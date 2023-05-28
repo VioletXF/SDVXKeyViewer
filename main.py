@@ -1,7 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-import pygame as pg, os, configparser
-config = configparser.ConfigParser()
+import pygame as pg, os
+from configparser import ConfigParser
+
+config = ConfigParser(comment_prefixes="/", allow_no_value=True)
 config.read("settings.ini")
 
 app = QtWidgets.QApplication([])
@@ -11,19 +13,29 @@ UNIT_SIZE = config.getint("Size", "unit", fallback=100)
 SCROLL_TO_RESIZE = config.getboolean("Size", "scroll_to_resize", fallback=True)
 
 ALWAYS_ON_TOP = config.getboolean("Other", "always_on_top", fallback=False)
-RESET_COUNTS_ON_START = config.getboolean("Other", "reset_counts_on_start", fallback=False)
+RESET_COUNTS_ON_START = config.getboolean(
+    "Other", "reset_counts_on_start", fallback=False
+)
 FPS = config.getint("Other", "polling_rate", fallback=240)
 
 BG_OPACITY = int(config.getfloat("Colors", "bg_opacity", fallback=1) * 255)
-BUTTON_LED_OPACITY = int(config.getfloat("Colors", "button_led_opacity", fallback=1) * 255)
+BUTTON_LED_OPACITY = int(
+    config.getfloat("Colors", "button_led_opacity", fallback=1) * 255
+)
 TEXT_OPACITY = int(config.getfloat("Colors", "text_opacity", fallback=1) * 255)
-TSUMAMI_INDICATOR_OFF_OPACITY = int(config.getfloat("Colors", "tsumami_indicator_off_opacity", fallback=0.2) * 255)
-TSUMAMI_INDICATOR_ON_OPACITY = int(config.getfloat("Colors", "tsumami_indicator_on_opacity", fallback=1) * 255)
-TSUMAMI_LED_OPACITY = int(config.getfloat("Colors", "tsumami_led_opacity", fallback=0.2) * 255)
+TSUMAMI_INDICATOR_OFF_OPACITY = int(
+    config.getfloat("Colors", "tsumami_indicator_off_opacity", fallback=0.2) * 255
+)
+TSUMAMI_INDICATOR_ON_OPACITY = int(
+    config.getfloat("Colors", "tsumami_indicator_on_opacity", fallback=1) * 255
+)
+TSUMAMI_LED_OPACITY = int(
+    config.getfloat("Colors", "tsumami_led_opacity", fallback=0.2) * 255
+)
 
-WINDOW_WIDTH = int(math.ceil(UNIT_SIZE * 7.5))+1
+WINDOW_WIDTH = int(math.ceil(UNIT_SIZE * 7.5)) + 1
 WINDOW_HEIGHT = int(math.ceil(UNIT_SIZE * 4))
-WINDOW_RATIO = WINDOW_WIDTH / WINDOW_HEIGHT
+
 font = QtGui.QFont()
 
 START_BG_COLOR = QtGui.QColor(255, 255, 255, BG_OPACITY)
@@ -38,12 +50,14 @@ FX_LED_COLOR = QtGui.QColor(255, 33, 12, BUTTON_LED_OPACITY)
 TEXT_COLOR = QtGui.QColor(0, 0, 0, TEXT_OPACITY)
 TEXT_PRESSED_COLOR = QtGui.QColor(255, 255, 255, TEXT_OPACITY)
 
+
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         if ALWAYS_ON_TOP:
             self.setWindowFlags(
-                QtCore.Qt.WindowFlags(QtCore.Qt.WindowType.FramelessWindowHint) | QtCore.Qt.WindowFlags(QtCore.Qt.WindowType.WindowStaysOnTopHint)
+                QtCore.Qt.WindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
+                | QtCore.Qt.WindowFlags(QtCore.Qt.WindowType.WindowStaysOnTopHint)
             )
         else:
             self.setWindowFlags(
@@ -99,10 +113,8 @@ class MainWindow(QtWidgets.QWidget):
 
     def draw_start(self, qp: QtGui.QPainter):
         x = UNIT_SIZE * 5 // 2 + UNIT_SIZE
-        y = UNIT_SIZE //8
-        color = (
-            START_LED_COLOR if start_pressed else START_BG_COLOR
-        )
+        y = UNIT_SIZE // 8
+        color = START_LED_COLOR if start_pressed else START_BG_COLOR
         qp.setPen(color)
         qp.setBrush(color)
         qp.drawRect(x, y, UNIT_SIZE // 2, UNIT_SIZE // 2)
@@ -145,7 +157,6 @@ class MainWindow(QtWidgets.QWidget):
             str(fx_counts[num]),
         )
 
-
     def draw_tsumami(self, qp: QtGui.QPainter, right):
         global tsumami_l_angle, tsumami_r_angle, tsumami_l_turning, tsumami_r_turning, tsumami_l_clockwise, tsumami_r_clockwise
         tsumami_size = UNIT_SIZE * 3 // 4
@@ -154,8 +165,14 @@ class MainWindow(QtWidgets.QWidget):
 
         turning = tsumami_r_turning if right else tsumami_l_turning
         # blue for left, red for right
-        indicator_opacity = TSUMAMI_INDICATOR_ON_OPACITY if turning else TSUMAMI_INDICATOR_OFF_OPACITY
-        indicator_color = QtGui.QColor(255, 0, 0, indicator_opacity) if right else QtGui.QColor(0, 0, 255, indicator_opacity) 
+        indicator_opacity = (
+            TSUMAMI_INDICATOR_ON_OPACITY if turning else TSUMAMI_INDICATOR_OFF_OPACITY
+        )
+        indicator_color = (
+            QtGui.QColor(255, 0, 0, indicator_opacity)
+            if right
+            else QtGui.QColor(0, 0, 255, indicator_opacity)
+        )
 
         pos = [UNIT_SIZE * 6 + UNIT_SIZE // 2 + UNIT_SIZE // 4, 0] if right else [0, 0]
         # draw white at center
@@ -203,21 +220,19 @@ class MainWindow(QtWidgets.QWidget):
         qp.setBrush(arrow_color)
         if is_clockwise:
             qp.drawPolygon(
-                
-                    QtCore.QPoint(arrow_pos[0], arrow_pos[1]),
-                    QtCore.QPoint(arrow_pos[0] + arrow_size, arrow_pos[1]+ arrow_size // 2),
-                    QtCore.QPoint(arrow_pos[0], arrow_pos[1] + arrow_size),
-                
+                QtCore.QPoint(arrow_pos[0], arrow_pos[1]),
+                QtCore.QPoint(
+                    arrow_pos[0] + arrow_size, arrow_pos[1] + arrow_size // 2
+                ),
+                QtCore.QPoint(arrow_pos[0], arrow_pos[1] + arrow_size),
             )
         else:
             qp.drawPolygon(
-                
-                    QtCore.QPoint(arrow_pos[0]+arrow_size, arrow_pos[1]),
-                    QtCore.QPoint(arrow_pos[0], arrow_pos[1]+arrow_size//2),
-                    QtCore.QPoint(arrow_pos[0] + arrow_size, arrow_pos[1] + arrow_size),
-                
+                QtCore.QPoint(arrow_pos[0] + arrow_size, arrow_pos[1]),
+                QtCore.QPoint(arrow_pos[0], arrow_pos[1] + arrow_size // 2),
+                QtCore.QPoint(arrow_pos[0] + arrow_size, arrow_pos[1] + arrow_size),
             )
-    
+
     def draw_no_controller_alert(self, qp: QtGui.QPainter):
         if len(joysticks) == 0:
             qp.setPen(QtGui.QColor(255, 255, 255, 127))
@@ -234,23 +249,32 @@ class MainWindow(QtWidgets.QWidget):
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         global UNIT_SIZE
         UNIT_SIZE = int(self.width() / 7.5)
-        font.setPixelSize(UNIT_SIZE//10*4)
+
+        font.setPixelSize(UNIT_SIZE // 10 * 4)
+
+        # write to config
+        config["Size"]["unit"] = str(UNIT_SIZE)
+        with open("settings.ini", "w") as configfile:
+            config.write(configfile)
+
         return super().resizeEvent(a0)
 
     def wheelEvent(self, a0: QtGui.QWheelEvent) -> None:
+        global UNIT_SIZE, WINDOW_WIDTH, WINDOW_HEIGHT
         if SCROLL_TO_RESIZE:
             if a0.angleDelta().y() > 0:
-                new_width = self.width() + UNIT_SIZE
-                self.resize(new_width, int(new_width / WINDOW_RATIO))
+                UNIT_SIZE += 10
             else:
                 if self.width() <= 200:
                     return
-                new_width = self.width() - UNIT_SIZE
-                self.resize(new_width, int(new_width / WINDOW_RATIO))
+                UNIT_SIZE -= 10
+            WINDOW_WIDTH = int(math.ceil(UNIT_SIZE * 7.5)) + 1
+            WINDOW_HEIGHT = int(math.ceil(UNIT_SIZE * 4))
+        self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         return super().wheelEvent(a0)
-    
+
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
-        global fx_counts, bt_counts, running;
+        global fx_counts, bt_counts, running
         # on delete, reset all counts
         if a0.key() == QtCore.Qt.Key.Key_Delete:
             fx_counts = [0, 0]
@@ -265,8 +289,6 @@ class MainWindow(QtWidgets.QWidget):
 
 
 main = MainWindow()
-
-
 
 
 main.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -290,7 +312,6 @@ pg.joystick.init()
 clock = pg.time.Clock()
 joysticks = [pg.joystick.Joystick(x) for x in range(pg.joystick.get_count())]
 running = True
-
 
 
 bt_counts = [0 for _ in range(4)]
@@ -367,8 +388,12 @@ def tsumami(event):
 while running:
     if pg.joystick.get_count() != len(joysticks):
         joysticks = [pg.joystick.Joystick(x) for x in range(pg.joystick.get_count())]
-        tsumami_l_angle = joysticks[0].get_axis(0) * 180 + 180 if len(joysticks) > 0 else -90
-        tsumami_r_angle = joysticks[0].get_axis(1) * 180 + 180 if len(joysticks) > 0 else -90   
+        tsumami_l_angle = (
+            joysticks[0].get_axis(0) * 180 + 180 if len(joysticks) > 0 else -90
+        )
+        tsumami_r_angle = (
+            joysticks[0].get_axis(1) * 180 + 180 if len(joysticks) > 0 else -90
+        )
     tsumami_l_turning = False
     tsumami_r_turning = False
     for event in pg.event.get():
